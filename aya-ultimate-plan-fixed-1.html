@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="manifest" id="manifest-link">
+<script>
+// Inline manifest as blob so app works standalone without server
+const manifestData = {
+  "name": "مفكرة رمضان - Aya",
+  "short_name": "Aya رمضان",
+  "description": "مفكرتك الشخصية لرمضان",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFF5FB",
+  "theme_color": "#E91E8C",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {"src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%23E91E8C'/%3E%3Ctext x='96' y='130' font-size='100' text-anchor='middle'%3E🌙%3C/text%3E%3C/svg%3E", "sizes": "192x192", "type": "image/svg+xml"},
+    {"src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23E91E8C'/%3E%3Ctext x='256' y='340' font-size='280' text-anchor='middle'%3E🌙%3C/text%3E%3C/svg%3E", "sizes": "512x512", "type": "image/svg+xml"}
+  ]
+};
+const manifestBlob = new Blob([JSON.stringify(manifestData)], {type:'application/json'});
+const manifestURL = URL.createObjectURL(manifestBlob);
+document.getElementById('manifest-link').setAttribute('href', manifestURL);
+</script>
+<title>مفكرة رمضان - Aya</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink:#E91E8C;--pink-l:#F06AB4;--pink-p:#FFF0F8;
+  --green:#00B894;--gold:#F9A825;--blue:#0984e3;
+  --dark:#1a0a2e;--bg:#FFF5FB;--card:#fff;
+  --text:#2d1b3d;--text-l:#7a5a8a;--border:#F5D0E8;
+  --nav-h:65px;
+  --extra-bottom:60px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+#app{height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.pc{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:calc(var(--nav-h) + var(--extra-bottom) + env(safe-area-inset-bottom,0px));-webkit-overflow-scrolling:touch}
+.page{display:none;animation:fu .28s ease}.page.active{display:block}
+@keyframes fu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* TOP BAR */
+.top-bar{background:linear-gradient(135deg,var(--pink),#9b1080);color:#fff;padding:14px 18px 11px;text-align:center;box-shadow:0 3px 15px rgba(233,30,140,.3)}
+.top-bar h1{font-size:1.15rem;font-weight:700}
+.top-bar .dt{font-size:.73rem;opacity:.85;margin-top:2px;font-weight:300}
+
+/* BOTTOM NAV - FIXED */
+.bnav{
+  position:fixed;bottom:0;left:0;right:0;
+  height:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));
+  background:#fff;
+  border-top:2px solid var(--border);
+  display:flex;align-items:stretch;
+  z-index:200;
+  box-shadow:0 -3px 15px rgba(0,0,0,.1);
+}
+.nb{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;cursor:pointer;padding:8px 2px;background:none;border:none;
+  color:var(--text-l);transition:color .2s;min-width:0;
+}
+.nb svg{width:22px;height:22px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nb .nl{font-family:'Tajawal',sans-serif;font-size:.6rem;font-weight:600;white-space:nowrap}
+.nb.active{color:var(--pink)}
+
+/* CARDS */
+.card{background:var(--card);border-radius:18px;padding:15px;margin:8px 13px;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid var(--border)}
+.ct{font-size:.97rem;font-weight:700;color:var(--pink);margin-bottom:11px;display:flex;align-items:center;gap:7px}
+
+/* HERO */
+.hero{margin:8px 13px;background:linear-gradient(135deg,var(--pink),#9b1080);border-radius:22px;padding:18px 16px;color:#fff;position:relative;overflow:hidden;box-shadow:0 8px 26px rgba(233,30,140,.35)}
+.hero::before{content:'🌙';position:absolute;font-size:5rem;right:-8px;top:-8px;opacity:.12}
+.hero h2{font-size:1.2rem;font-weight:900}
+.hero p{font-size:.82rem;opacity:.9;margin-top:4px;font-weight:300}
+
+/* COUNTDOWN */
+.cdpill{margin:0 13px 8px;background:linear-gradient(135deg,#1a0a2e,#2d1060);border-radius:16px;padding:13px 16px;display:flex;align-items:center;gap:12px;color:#fff}
+.cdpill .cdn{font-size:2rem;font-weight:900;color:var(--gold);flex-shrink:0}
+.cdpill .cdt{font-size:.82rem;opacity:.9;line-height:1.5}
+.cdpill .cdtitle{font-weight:700;font-size:.9rem}
+
+/* STATS */
+.srow{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:8px 13px}
+.sbox{background:#fff;border-radius:14px;padding:11px 7px;text-align:center;box-shadow:0 2px 9px rgba(0,0,0,.06);border:1px solid var(--border)}
+.sbox .sn{font-size:1.3rem;font-weight:900;color:var(--pink);display:block}
+.sbox .sl{font-size:.63rem;color:var(--text-l);margin-top:1px}
+
+/* CHECK ROWS */
+.cr{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid #f5f0f8;cursor:pointer;user-select:none}
+.cr:last-child{border-bottom:none}
+.cc{width:25px;height:25px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:.78rem;font-weight:700}
+.cc.done{background:var(--green);border-color:var(--green);color:#fff}
+.cr .crl{font-size:.87rem;font-weight:500;flex:1}
+.cr .del-task{background:none;border:none;color:#ddd;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1}
+.cr .del-task:active{color:#e74c3c}
+.pb-w{background:#f0e6f8;border-radius:20px;height:7px;margin-top:11px;overflow:hidden}
+.pb-f{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--pink-l),var(--pink));transition:width .4s ease}
+
+/* ADD CUSTOM TASK */
+.add-task-row{display:flex;gap:7px;margin-top:12px;padding-top:11px;border-top:1px dashed var(--border)}
+.add-task-input{flex:1;border:1.5px solid var(--border);border-radius:11px;padding:9px 12px;font-family:'Tajawal',sans-serif;font-size:.87rem;color:var(--text);background:#fffbfe;outline:none}
+.add-task-input:focus{border-color:var(--pink)}
+.add-task-btn{padding:9px 14px;background:var(--pink);color:#fff;border:none;border-radius:11px;font-family:'Tajawal',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;flex-shrink:0}
+
+/* PROGRESS BAR */
+.motiv{margin:0 13px 8px;background:linear-gradient(135deg,#fff0fb,#ffe6f5);border-radius:15px;padding:13px;text-align:center;border:1px solid #ffd6ef}
+.motiv .mq{font-size:.9rem;color:var(--pink);font-weight:700}
+.motiv .ms{font-size:.76rem;color:var(--text-l);margin-top:3px}
+
+/* TABS */
+.tabs{display:flex;gap:7px;margin:8px 13px 0;overflow-x:auto;scrollbar-width:none;padding-bottom:1px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:7px 14px;border-radius:18px;background:#fff;border:2px solid var(--border);font-family:'Tajawal',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;color:var(--text-l);transition:all .2s}
+.tab.active{background:var(--pink);border-color:var(--pink);color:#fff}
+.tsec{display:none}.tsec.active{display:block}
+
+/* MEAL CARDS */
+.mhead{margin:8px 13px 0;background:linear-gradient(135deg,var(--pink),#b5179e);border-radius:17px;padding:13px 15px;color:#fff;display:flex;justify-content:space-between;align-items:center}
+.mhead h3{font-size:.92rem;font-weight:700}
+.cbadge{background:rgba(255,255,255,.25);padding:4px 11px;border-radius:18px;font-size:.76rem;font-weight:600}
+.ocard{background:#fff;border-radius:15px;padding:13px;border:1.5px solid var(--border);margin:7px 13px 0}
+.ot{font-size:.9rem;font-weight:700;margin-bottom:7px}
+.oi{font-size:.8rem;color:var(--text-l);line-height:1.9}
+.ctag{display:inline-block;background:#e8f8f2;color:var(--green);font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:9px;margin-top:7px}
+.tpill{margin:7px 13px 0;background:#fffbec;border:1px solid #ffe082;border-radius:12px;padding:10px 13px;font-size:.8rem;color:#7a5800;line-height:1.6}
+
+/* EXERCISES */
+.excard{margin:7px 13px 0;background:#fff;border-radius:17px;border:1.5px solid var(--border);overflow:hidden}
+.exh{display:flex;align-items:center;padding:12px 13px;gap:10px;cursor:pointer}
+.exn{width:30px;height:30px;background:var(--pink);color:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;flex-shrink:0}
+.exi{flex:1}.exname{font-weight:700;font-size:.9rem}.exreps{font-size:.74rem;color:var(--text-l);margin-top:1px}
+.exarrow{font-size:.95rem;color:var(--text-l);transition:transform .2s}
+.excard.open .exarrow{transform:rotate(180deg)}
+.exbody{display:none;padding:0 13px 13px;border-top:1px solid var(--border)}
+.excard.open .exbody{display:block}
+.exben{background:var(--pink-p);border-radius:9px;padding:9px 11px;font-size:.78rem;color:var(--pink);margin-top:10px;font-weight:500}
+.vlink{display:inline-flex;align-items:center;gap:5px;background:#ff0000;color:#fff;padding:6px 13px;border-radius:18px;font-size:.76rem;font-weight:600;text-decoration:none;margin-top:8px}
+
+/* FOOD SEARCH */
+.ai-food-box{background:linear-gradient(135deg,#f0f0ff,#e8e0ff);border:1.5px solid #c9b8ff;border-radius:16px;padding:14px;margin-top:10px}
+.qcat-btn{padding:5px 11px;background:#fff;border:1.5px solid #c9b8ff;border-radius:20px;font-family:'Tajawal',sans-serif;font-size:.75rem;font-weight:700;color:#5b21b6;cursor:pointer;white-space:nowrap}
+.qcat-btn.active,.qcat-btn:active{background:#7c3aed;color:#fff;border-color:#7c3aed}
+.food-db-item{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid #f0ebff;cursor:pointer;font-size:.83rem}
+.food-db-item:last-child{border-bottom:none}
+.food-db-item:hover,.food-db-item:active{background:#f5f0ff}
+.food-db-item .fdi-name{font-weight:600;color:var(--text)}
+.food-db-item .fdi-cal{font-weight:700;color:#7c3aed;font-size:.8rem}
+.ai-textarea{width:100%;min-height:80px;border:1.5px solid #c9b8ff;border-radius:12px;padding:10px 12px;font-family:'Tajawal',sans-serif;font-size:.87rem;color:var(--text);resize:none;background:#fff;outline:none;transition:border-color .2s}
+.ai-textarea:focus{border-color:#7c3aed}
+.ai-btn{width:100%;margin-top:9px;padding:11px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;border-radius:12px;font-family:'Tajawal',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.ai-btn:active{opacity:.9}
+.ai-btn.loading::after{content:'';width:16px;height:16px;border:2px solid rgba(255,255,255,.5);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ai-result{margin-top:10px;background:#fff;border-radius:12px;padding:12px;border:1px solid #c9b8ff;display:none}
+.ai-result.show{display:block}
+.ai-result .ai-total{font-size:1.1rem;font-weight:900;color:#7c3aed;text-align:center;margin-bottom:8px}
+.ai-result-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f0ebff;font-size:.82rem}
+.ai-result-item:last-child{border-bottom:none}
+.ai-result-item .ain{color:var(--text)}
+.ai-result-item .aic{font-weight:700;color:#7c3aed}
+.add-ai-btn{width:100%;margin-top:9px;padding:9px;background:var(--green);color:#fff;border:none;border-radius:11px;font-family:'Tajawal',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer}
+
+/* MANUAL FOOD LOG */
+.food-log-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.food-log-item{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:11px;padding:9px 12px;border:1px solid var(--border)}
+.fli-name{font-size:.84rem;font-weight:500;flex:1}
+.fli-cal{font-size:.82rem;font-weight:700;color:var(--green);margin:0 8px}
+.fli-del{background:none;border:none;color:#ddd;font-size:1rem;cursor:pointer;padding:0 2px}
+.fli-del:active{color:#e74c3c}
+.cal-total-bar{background:linear-gradient(135deg,var(--pink),#9b1080);border-radius:14px;padding:13px 15px;margin-top:12px;color:#fff;display:flex;justify-content:space-between;align-items:center}
+.ctb-label{font-size:.82rem;opacity:.9}
+.ctb-goal{font-size:.74rem;opacity:.8;margin-top:2px}
+.ctb-num{font-size:1.4rem;font-weight:900}
+
+/* WATER */
+.wgrid{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin-top:11px}
+.wcup{aspect-ratio:1;border-radius:9px;background:#e8f4ff;border:2px solid #b3d9ff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.95rem;position:relative;overflow:hidden;transition:all .25s}
+.wcup::before{content:'';position:absolute;bottom:0;left:0;right:0;height:0;background:linear-gradient(to top,#0984e3,#74b9ff);transition:height .3s ease}
+.wcup.filled::before{height:100%}
+.wcup .ci{position:relative;z-index:1}
+
+/* NOTES */
+.notes-area{width:100%;min-height:80px;border:1.5px solid var(--border);border-radius:12px;padding:10px;font-family:'Tajawal',sans-serif;font-size:.85rem;color:var(--text);resize:none;background:#fffbfe;margin-top:9px;outline:none}
+.notes-area:focus{border-color:var(--pink)}
+.save-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--pink),#9b1080);color:#fff;border:none;border-radius:14px;font-family:'Tajawal',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;margin-top:10px;box-shadow:0 4px 13px rgba(233,30,140,.3);transition:transform .15s}
+.save-btn:active{transform:scale(.97)}
+.wrow{display:flex;align-items:center;gap:9px;margin-top:9px}
+.winput{flex:1;border:1.5px solid var(--border);border-radius:11px;padding:9px 12px;font-family:'Tajawal',sans-serif;font-size:.95rem;color:var(--text);background:#fffbfe;outline:none}
+.winput:focus{border-color:var(--pink)}
+
+/* PROGRESS */
+.calc-row{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.calc-label{font-size:.84rem;font-weight:600;color:var(--text-l);min-width:70px;flex-shrink:0}
+.calc-input{flex:1;border:1.5px solid var(--border);border-radius:11px;padding:9px 12px;font-family:'Tajawal',sans-serif;font-size:.9rem;color:var(--text);background:#fffbfe;outline:none}
+.calc-input:focus{border-color:var(--pink)}
+select.calc-input{appearance:none;cursor:pointer}
+.calc-btn{width:100%;padding:11px;background:linear-gradient(135deg,var(--pink),#9b1080);color:#fff;border:none;border-radius:14px;font-family:'Tajawal',sans-serif;font-size:.96rem;font-weight:700;cursor:pointer;margin-top:4px;box-shadow:0 4px 13px rgba(233,30,140,.3)}
+.result-box{background:var(--pink-p);border:1.5px solid #ffc2e3;border-radius:14px;padding:14px;margin-top:12px;display:none}
+.result-box.show{display:block}
+.rbrow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #ffd6ef}
+.rbrow:last-child{border-bottom:none}
+.rbrow span{font-size:.83rem;color:var(--text-l)}
+.rbrow strong{font-size:.92rem;color:var(--pink);font-weight:900}
+
+/* MEASUREMENTS */
+.meas-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px}
+.meas-box{background:var(--pink-p);border-radius:13px;padding:12px;border:1px solid #ffd6ef}
+.meas-box label{font-size:.76rem;color:var(--text-l);font-weight:600;display:block;margin-bottom:5px}
+.meas-input{width:100%;border:1.5px solid var(--border);border-radius:9px;padding:8px 10px;font-family:'Tajawal',sans-serif;font-size:.9rem;color:var(--text);background:#fff;outline:none}
+.meas-input:focus{border-color:var(--pink)}
+.mh-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.8rem}
+.mh-date{color:var(--text-l)}
+.mh-vals{display:flex;gap:12px;flex-wrap:wrap}
+.mh-val{color:var(--pink);font-weight:700}
+
+/* WEIGHT CHART */
+.chart-wrap{background:#fff;border-radius:14px;padding:13px;margin-top:11px;border:1px solid var(--border)}
+.chart-empty{text-align:center;padding:30px;color:var(--text-l);font-size:.85rem}
+
+/* LOG */
+.log-empty{text-align:center;padding:40px 20px;color:var(--text-l)}
+.log-empty .icon{font-size:2.8rem;margin-bottom:9px}
+.le{margin:7px 13px 0;background:#fff;border-radius:17px;border:1.5px solid var(--border);overflow:hidden}
+.ledb{background:var(--pink-p);padding:9px 13px;display:flex;justify-content:space-between;align-items:center}
+.led{font-weight:700;font-size:.86rem;color:var(--pink)}
+.lesp{background:var(--pink);color:#fff;padding:3px 9px;border-radius:18px;font-size:.72rem;font-weight:700}
+.lec{padding:11px 13px;font-size:.8rem;line-height:1.9}
+.lch{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
+.lt{padding:3px 9px;border-radius:9px;font-size:.72rem;font-weight:600}
+.lt.done{background:#e8f8f2;color:var(--green)}.lt.skip{background:#ffeaea;color:#e74c3c}
+.lnote{color:var(--text-l);font-style:italic;margin-top:3px}
+.lwt{color:var(--pink);font-weight:700;margin-top:2px}
+
+/* TIPS */
+.tcard{margin:7px 13px 0;border-radius:16px;padding:14px;border:1.5px solid}
+.tcard h3{font-size:.9rem;font-weight:700;margin-bottom:8px}
+.tcard ul{list-style:none;font-size:.8rem;line-height:2}
+.tcard.pink{background:var(--pink-p);border-color:#ffc2e3}.tcard.pink h3{color:var(--pink)}
+.tcard.green{background:#edfbf5;border-color:#a8edce}.tcard.green h3{color:var(--green)}
+.tcard.gold{background:#fffbec;border-color:#ffe082}.tcard.gold h3{color:#c77700}
+.tcard.blue{background:#eef4ff;border-color:#b3ccff}.tcard.blue h3{color:#0055cc}
+.tl{margin:8px 13px;background:linear-gradient(135deg,var(--pink),#9b1080);border-radius:19px;padding:15px;color:#fff}
+.tl h3{font-size:.9rem;font-weight:700;margin-bottom:11px}
+.tli{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.tldot{width:25px;height:25px;background:rgba(255,255,255,.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:900;flex-shrink:0}
+.tltext{font-size:.8rem;opacity:.95;line-height:1.5}
+.wplan{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin:7px 13px}
+.wbox{background:#fff;border-radius:12px;padding:10px 7px;text-align:center;border:1.5px solid var(--border);font-size:.75rem;line-height:1.6}
+.wbox .wk{font-weight:900;color:var(--pink);font-size:.8rem;display:block;margin-bottom:2px}
+
+.slbl{font-size:.69rem;font-weight:700;color:var(--text-l);letter-spacing:1px;text-transform:uppercase;margin:13px 13px 4px}
+
+.toast{position:fixed;bottom:calc(var(--nav-h) + 12px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);color:#fff;padding:9px 17px;border-radius:18px;font-size:.81rem;font-weight:500;z-index:999;opacity:0;transition:all .3s;white-space:nowrap;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="top-bar">
+    <h1>🌙 مفكرة رمضان - Aya</h1>
+    <div class="dt" id="todayDate"></div>
+  </div>
+
+  <div class="pc">
+
+    <!-- ════ HOME ════ -->
+    <div class="page active" id="page-home">
+      <div class="hero">
+        <h2>أهلاً Aya! 💖</h2>
+        <p>رمضان كريم ومبارك عليكِ. أنتِ تستطيعين تحقيق هدفك!</p>
+        <div style="margin-top:11px;display:flex;gap:7px;flex-wrap:wrap">
+          <div style="background:rgba(255,255,255,.2);padding:5px 10px;border-radius:10px;font-size:.76rem">🎯 الهدف: 48-50 كغ</div>
+          <div style="background:rgba(255,255,255,.2);padding:5px 10px;border-radius:10px;font-size:.76rem">📉 1300-1400 سعرة</div>
+        </div>
+      </div>
+      <div class="cdpill" id="ramadanCountdown">
+        <div class="cdn" id="cdNum">--</div>
+        <div class="cdt"><div class="cdtitle">يوماً متبقياً في رمضان 🌙</div><div style="font-size:.74rem;opacity:.8;margin-top:2px">استمري، أنتِ رائعة!</div></div>
+      </div>
+      <div class="srow">
+        <div class="sbox"><span class="sn" id="hw">-</span><span class="sl">كغ اليوم</span></div>
+        <div class="sbox"><span class="sn" id="hwc">0</span><span class="sl">أكواب ماء</span></div>
+        <div class="sbox"><span class="sn" id="hdc">0/4</span><span class="sl">مهام اليوم</span></div>
+      </div>
+      <div class="slbl">مهام اليوم</div>
+      <div class="card">
+        <!-- Fixed tasks -->
+        <div class="cr" onclick="tc('workout')"><div class="cc" id="c-workout"></div><span>💪</span><span class="crl">تمرين اليوم (15-20 دقيقة)</span></div>
+        <div class="cr" onclick="tc('diet')"><div class="cc" id="c-diet"></div><span>🍽️</span><span class="crl">التزمت بخطة الأكل</span></div>
+        <div class="cr" onclick="tc('water')"><div class="cc" id="c-water"></div><span>💧</span><span class="crl">شربت 8-10 أكواب ماء</span></div>
+        <div class="cr" onclick="tc('sleep')"><div class="cc" id="c-sleep"></div><span>😴</span><span class="crl">نمت 7-8 ساعات</span></div>
+        <!-- Custom tasks rendered here -->
+        <div id="customTasksHome"></div>
+        <div class="pb-w"><div class="pb-f" id="pbf" style="width:0%"></div></div>
+      </div>
+      <div class="slbl">تحفيزك اليومي</div>
+      <div class="motiv">
+        <div class="mq" id="mq">🌟 أنتِ أقوى مما تتخيلين 🌟</div>
+        <div class="ms">كل تمرين تكملينه هو خطوة نحو النسخة الأفضل منكِ!</div>
+      </div>
+      <div style="height:6px"></div>
+    </div>
+
+    <!-- ════ MEALS ════ -->
+    <div class="page" id="page-meals">
+      <div class="tabs">
+        <button class="tab active" onclick="stab('meals','iftar',this)">🌙 الإفطار</button>
+        <button class="tab" onclick="stab('meals','tarawih',this)">🌃 التراويح</button>
+        <button class="tab" onclick="stab('meals','suhoor',this)">🌅 السحور</button>
+        <button class="tab" onclick="stab('meals','cals',this)">🔥 السعرات</button>
+      </div>
+      <div class="tsec active" id="meals-iftar">
+        <div class="mhead"><h3>🌙 الإفطار</h3><div class="cbadge">400-450 سعرة</div></div>
+        <div class="tpill">💡 <strong>الترتيب الذكي:</strong> تمرة + ماي ← 5 دقائق ← شوربة ← سلطة ← الطبق الرئيسي</div>
+        <div class="ocard"><div class="ot">🥣 شوربة خضار</div><div class="oi">• 1.5-2 كاسة&nbsp;• شعيرية قليلة&nbsp;• سمنة خفيفة&nbsp;• خضار متنوعة</div><span class="ctag">~80 سعرة</span></div>
+        <div class="ocard"><div class="ot">🥗 سلطة كبيرة</div><div class="oi">• خس + خيار + بندورة + جزر + فليفلة<br>• صوص: خل + ليمون + ½ م.ص زيت زيتون</div><span class="ctag">~50 سعرة</span></div>
+        <div class="ocard"><div class="ot">🍽️ الطبق الرئيسي</div><div class="oi">• فتة حمص 6-8 معالق، خففي الخبز المقلي<br>• أو بديل: رز + دجاج مشوي</div><span class="ctag">~270 سعرة</span></div>
+        <div class="tpill">✨ كلي ببطء ومضغي كويس. خلي 20 دقيقة بين كل صحن!</div>
+      </div>
+      <div class="tsec" id="meals-tarawih">
+        <div class="mhead"><h3>🌃 بعد التراويح</h3><div class="cbadge">150-200 سعرة</div></div>
+        <div class="ocard"><div class="ot">🍎 خيار 1: فواكه</div><div class="oi">• تفاحة وسط أو كأس فراولة أو برتقالة<br>• مع علبة زبادي خفيف</div><span class="ctag">~150 سعرة</span></div>
+        <div class="ocard"><div class="ot">🥜 خيار 2: مكسرات</div><div class="oi">• 10-12 حبة لوز نيء أو 6-8 حبات جوز<br>• مع تفاحة صغيرة — بدون ملح!</div><span class="ctag">~180 سعرة</span></div>
+        <div class="ocard"><div class="ot">🍫 خيار 3: حلويات صحية</div><div class="oi">• 2 تمرة محشوة لوز<br>• أو قطعة شوكولاتة داكنة + شاي أخضر</div><span class="ctag">~120 سعرة</span></div>
+      </div>
+      <div class="tsec" id="meals-suhoor">
+        <div class="mhead"><h3>🌅 السحور (3:30 ص)</h3><div class="cbadge">400-450 سعرة</div></div>
+        <div class="ocard"><div class="ot">🥚 خيار 1: بروتين عالي</div><div class="oi">• 2 بيضة مسلوقة + ½ رغيف خبز أسمر<br>• خضار + لبنة قليلة الدسم</div><span class="ctag">~380 سعرة</span></div>
+        <div class="ocard"><div class="ot">🥛 خيار 2: زبادي مشبع</div><div class="oi">• 2 علبة زبادي كبيرة + 3 معالق شوفان<br>• معلقة عسل + فواكه مجففة</div><span class="ctag">~400 سعرة</span></div>
+        <div class="ocard"><div class="ot">🧀 خيار 3: جبنة وخضار</div><div class="oi">• جبنة بيضاء قليلة دسم + نص رغيف أسمر<br>• خضار متنوعة + 5-6 حبات زيتون</div><span class="ctag">~420 سعرة</span></div>
+        <div class="tpill">💧 <strong>مهم:</strong> 2-3 كاسات ماي بالسحور + تجنبي الملح والحلويات!</div>
+      </div>
+      <div class="tsec" id="meals-cals">
+        <div class="card" style="margin-top:8px">
+          <div class="ct">🔥 خطة السعرات اليومية</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;text-align:center">
+            <div style="background:var(--pink-p);border-radius:12px;padding:10px 5px"><div style="font-size:1.3rem;font-weight:900;color:var(--pink)">1300</div><div style="font-size:.67rem;color:var(--text-l);margin-top:1px">هدف السعرات</div></div>
+            <div style="background:#edfbf5;border-radius:12px;padding:10px 5px"><div style="font-size:1.3rem;font-weight:900;color:var(--green)">300</div><div style="font-size:.67rem;color:var(--text-l);margin-top:1px">العجز اليومي</div></div>
+            <div style="background:#fffbec;border-radius:12px;padding:10px 5px"><div style="font-size:1.3rem;font-weight:900;color:var(--gold)">0.5</div><div style="font-size:.67rem;color:var(--text-l);margin-top:1px">كغ/أسبوع</div></div>
+          </div>
+          <div style="margin-top:11px;background:var(--pink-p);border-radius:12px;padding:11px;font-size:.8rem;line-height:2;color:var(--text)">✅ عجز خفيف = جسمك ما يدخل وضع "الجوع"<br>✅ ينحفك تدريجي بدون خسارة عضلات<br>❌ لا تنزلي تحت 1200 سعرة أبداً!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ EXERCISES ════ -->
+    <div class="page" id="page-exercises">
+      <div class="card" style="margin-top:8px">
+        <div class="ct">💪 روتين التمارين اليومي</div>
+        <div style="font-size:.79rem;color:var(--text-l);line-height:1.9">⏱ المدة: 15-20 دقيقة &nbsp;•&nbsp; 📅 5-6 أيام/أسبوع<br>💡 أفضل وقت: قبل الإفطار بـ 30 دقيقة</div>
+      </div>
+      <div class="excard" onclick="tex(this)"><div class="exh"><div class="exn">1</div><div class="exi"><div class="exname">🔥 سكوات ضيق</div><div class="exreps">25 تكرار × 3 جولات — استراحة 30 ث</div></div><div class="exarrow">▼</div></div><div class="exbody"><div class="exben">✨ يشد داخل الفخذ + المؤخرة + البطن السفلي</div><a href="https://www.youtube.com/results?search_query=narrow+squat+arabic" target="_blank" class="vlink">▶ شاهدي الفيديو</a></div></div>
+      <div class="excard" onclick="tex(this)"><div class="exh"><div class="exn">2</div><div class="exi"><div class="exname">🎯 لانجز خلفي</div><div class="exreps">20 لكل رجل × 3 جولات — استراحة 45 ث</div></div><div class="exarrow">▼</div></div><div class="exbody"><div class="exben">✨ ينحف الأفخاذ ويصغر المؤخرة بشكل ملحوظ</div><a href="https://www.youtube.com/results?search_query=reverse+lunge+arabic" target="_blank" class="vlink">▶ شاهدي الفيديو</a></div></div>
+      <div class="excard" onclick="tex(this)"><div class="exh"><div class="exn">3</div><div class="exi"><div class="exname">⚡ سكوات نبض</div><div class="exreps">30 نبضة × 3 جولات — استراحة 30 ث</div></div><div class="exarrow">▼</div></div><div class="exbody"><div class="exben">✨ يحرق الدهون الداخلية بسرعة!</div><a href="https://www.youtube.com/results?search_query=pulse+squat+arabic" target="_blank" class="vlink">▶ شاهدي الفيديو</a></div></div>
+      <div class="excard" onclick="tex(this)"><div class="exh"><div class="exn">4</div><div class="exi"><div class="exname">🦵 رفع رجل على الجنب</div><div class="exreps">25 لكل جهة × 3 جولات</div></div><div class="exarrow">▼</div></div><div class="exbody"><div class="exben">✨ يضرب داخل وخارج الفخذ + الأرداف</div><a href="https://www.youtube.com/results?search_query=side+leg+raise+arabic" target="_blank" class="vlink">▶ شاهدي الفيديو</a></div></div>
+      <div class="excard" onclick="tex(this)"><div class="exh"><div class="exn">5</div><div class="exi"><div class="exname">🍑 جسر المؤخرة</div><div class="exreps">20 × 3 ببطء — استراحة 30 ث</div></div><div class="exarrow">▼</div></div><div class="exbody"><div class="exben">✨ مؤخرة مشدودة ومرفوعة بدون تكبير</div><a href="https://www.youtube.com/results?search_query=glute+bridge+arabic" target="_blank" class="vlink">▶ شاهدي الفيديو</a></div></div>
+      <div class="excard" onclick="tex(this)"><div class="exh"><div class="exn">6</div><div class="exi"><div class="exname">💎 بلانك</div><div class="exreps">45 ثانية × 3 جولات</div></div><div class="exarrow">▼</div></div><div class="exbody"><div class="exben">✨ يشد البطن كاملاً ويمنع الكرش</div><a href="https://www.youtube.com/results?search_query=plank+exercise+arabic" target="_blank" class="vlink">▶ شاهدي الفيديو</a></div></div>
+      <div class="excard" onclick="tex(this)"><div class="exh"><div class="exn">7</div><div class="exi"><div class="exname">🌟 بلانك فتح/غلق</div><div class="exreps">15 × 3 جولات — استراحة 45 ث</div></div><div class="exarrow">▼</div></div><div class="exbody"><div class="exben">✨ داخل الفخذ + أسفل البطن + كارديو</div><a href="https://www.youtube.com/results?search_query=plank+jacks+arabic" target="_blank" class="vlink">▶ شاهدي الفيديو</a></div></div>
+      <div class="slbl">تطوير التمرين</div>
+      <div class="wplan">
+        <div class="wbox"><span class="wk">أسبوع 1-2</span>نفس الأرقام<br>ركزي على الأداء</div>
+        <div class="wbox"><span class="wk">أسبوع 3-4</span>زيدي 5 تكرارات<br>لكل تمرين</div>
+        <div class="wbox"><span class="wk">أسبوع 5+</span>زيدي جولة أو<br>أوزان خفيفة</div>
+      </div>
+      <div style="height:6px"></div>
+    </div>
+
+    <!-- ════ DAILY TRACKER ════ -->
+    <div class="page" id="page-tracker">
+      <div class="tabs" style="margin-top:8px">
+        <button class="tab active" onclick="stab('trk','checks',this)">✅ مهامي</button>
+        <button class="tab" onclick="stab('trk','food',this)">🤖 ما أكلت</button>
+        <button class="tab" onclick="stab('trk','notes',this)">📝 ملاحظاتي</button>
+      </div>
+
+      <!-- CHECKS TAB -->
+      <div class="tsec active" id="trk-checks">
+        <div class="card" style="margin-top:8px">
+          <div class="ct">✅ مهام اليوم</div>
+          <div class="cr" onclick="tc('workout')"><div class="cc" id="c-workout2"></div><span>💪</span><span class="crl">تمرين اليوم</span></div>
+          <div class="cr" onclick="tc('diet')"><div class="cc" id="c-diet2"></div><span>🍽️</span><span class="crl">التزمت بخطة الأكل</span></div>
+          <div class="cr" onclick="tc('water')"><div class="cc" id="c-water2"></div><span>💧</span><span class="crl">شربت 8-10 أكواب ماء</span></div>
+          <div class="cr" onclick="tc('sleep')"><div class="cc" id="c-sleep2"></div><span>😴</span><span class="crl">نمت 7-8 ساعات</span></div>
+          <div id="customTasksTracker"></div>
+          <!-- Add custom task -->
+          <div class="add-task-row">
+            <input class="add-task-input" id="newTaskInput" placeholder="أضيفي مهمة خاصة بكِ... مثلاً: قرأت قرآن، مشيت 10 دقائق">
+            <button class="add-task-btn" onclick="addCustomTask()">+</button>
+          </div>
+        </div>
+        <div class="card" style="margin-top:0">
+          <div class="ct">💧 متتبع الماء</div>
+          <div style="font-size:.76rem;color:var(--text-l)">اضغطي على كل كأس لملئه</div>
+          <div class="wgrid" id="wgrid"></div>
+          <div style="margin-top:8px;font-size:.81rem;color:var(--text-l);text-align:center" id="wcnt">0 / 8 أكواب</div>
+        </div>
+        <div class="card" style="margin-top:0">
+          <div class="ct">⚖️ وزن اليوم</div>
+          <div class="wrow">
+            <input type="number" class="winput" id="wgtInput" placeholder="مثال: 52.5" step="0.1">
+            <span style="font-size:.82rem;color:var(--text-l)">كيلوغرام</span>
+          </div>
+        </div>
+        <button class="save-btn" style="margin:0 13px;width:calc(100% - 26px)" onclick="saveDay()">💾 حفظ يومي في السجل</button>
+      </div>
+
+      <!-- FOOD SEARCH TAB -->
+      <div class="tsec" id="trk-food">
+        <div class="card" style="margin-top:8px">
+          <div class="ct">🔍 ابحثي عن الأكل واحسبي السعرات</div>
+          <div style="font-size:.8rem;color:var(--text-l);margin-bottom:10px;line-height:1.7">ابحثي عن أي أكل وأضيفيه بالكمية اللي أكلتِها!</div>
+
+          <div class="ai-food-box">
+            <!-- Search bar -->
+            <div style="position:relative">
+              <input type="text" id="foodSearchInput" placeholder="🔍 ابحثي عن أكل... مثل: رز، دجاج، تمر"
+                style="width:100%;padding:10px 12px;border:1.5px solid #c9b8ff;border-radius:12px;font-family:'Tajawal',sans-serif;font-size:.9rem;color:var(--text);background:#fff;outline:none;box-sizing:border-box;direction:rtl"
+                oninput="searchFood(this.value)" autocomplete="off" />
+              <div id="foodSuggestions" style="display:none;position:absolute;top:100%;right:0;left:0;background:#fff;border:1.5px solid #c9b8ff;border-top:none;border-radius:0 0 12px 12px;max-height:220px;overflow-y:auto;z-index:50;box-shadow:0 4px 15px rgba(0,0,0,.1)"></div>
+            </div>
+
+            <!-- Selected food + qty -->
+            <div id="selectedFoodBox" style="display:none;margin-top:10px;background:#fff;border:1.5px solid #c9b8ff;border-radius:12px;padding:12px">
+              <div id="selectedFoodName" style="font-weight:700;font-size:.9rem;color:var(--text);margin-bottom:4px"></div>
+              <div id="selectedFoodBase" style="font-size:.75rem;color:var(--text-l);margin-bottom:10px"></div>
+              <!-- Mode toggle -->
+              <div style="display:flex;gap:7px;margin-bottom:10px">
+                <button id="modeUnitBtn" onclick="setFoodMode('unit')" style="flex:1;padding:6px;background:#7c3aed;color:#fff;border:none;border-radius:9px;font-family:'Tajawal',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">بالوحدة الأصلية</button>
+                <button id="modeSpoonsBtn" onclick="setFoodMode('spoons')" style="flex:1;padding:6px;background:#f0ebff;color:#5b21b6;border:1.5px solid #c9b8ff;border-radius:9px;font-family:'Tajawal',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">🥄 بالمعالق</button>
+              </div>
+              <!-- Unit mode -->
+              <div id="modeUnitRow" style="display:flex;align-items:center;gap:10px">
+                <label style="font-size:.8rem;font-weight:600;color:#5b21b6;white-space:nowrap">الكمية:</label>
+                <input type="number" id="foodQty" value="1" min="0.25" step="0.25"
+                  style="width:70px;padding:6px 8px;border:1.5px solid #c9b8ff;border-radius:8px;font-family:'Tajawal',sans-serif;font-size:.9rem;text-align:center"
+                  oninput="updateQtyCalc()" />
+                <span id="foodUnit" style="font-size:.8rem;color:var(--text-l)"></span>
+                <span id="qtyCalcResult" style="margin-right:auto;font-weight:900;font-size:1rem;color:#7c3aed"></span>
+              </div>
+              <!-- Spoons mode -->
+              <div id="modeSpoonsRow" style="display:none">
+                <div style="background:#f5f0ff;border-radius:9px;padding:9px 11px;margin-bottom:8px;font-size:.75rem;color:#5b21b6;line-height:1.6">💡 اختاري نوع المعلقة وعدد المعالق — بيحسب السعرات تلقائياً!</div>
+                <div style="display:flex;gap:7px;margin-bottom:8px">
+                  <button id="spoonTypeLargeBtn" onclick="setSpoonType('large',this)" style="flex:1;padding:6px;background:#7c3aed;color:#fff;border:none;border-radius:9px;font-family:'Tajawal',sans-serif;font-size:.75rem;font-weight:700;cursor:pointer">معلقة كبيرة (15مل)</button>
+                  <button id="spoonTypeSmallBtn" onclick="setSpoonType('small',this)" style="flex:1;padding:6px;background:#f0ebff;color:#5b21b6;border:1.5px solid #c9b8ff;border-radius:9px;font-family:'Tajawal',sans-serif;font-size:.75rem;font-weight:700;cursor:pointer">معلقة صغيرة (5مل)</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <label style="font-size:.8rem;font-weight:600;color:#5b21b6;white-space:nowrap">عدد المعالق:</label>
+                  <input type="number" id="spoonQty" value="1" min="0.5" step="0.5"
+                    style="width:70px;padding:6px 8px;border:1.5px solid #c9b8ff;border-radius:8px;font-family:'Tajawal',sans-serif;font-size:.9rem;text-align:center"
+                    oninput="updateSpoonCalc()" />
+                  <span id="spoonCalcResult" style="margin-right:auto;font-weight:900;font-size:1rem;color:#7c3aed">0 سعرة</span>
+                </div>
+                <div id="spoonNote" style="font-size:.72rem;color:var(--text-l);margin-top:5px;text-align:center"></div>
+              </div>
+              <button onclick="addFoodFromDB()" style="margin-top:10px;width:100%;padding:9px;background:linear-gradient(135deg,var(--pink),#9b1080);color:#fff;border:none;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer">✅ أضيفي للسجل</button>
+            </div>
+
+            <!-- Quick Ramadan categories -->
+            <div style="margin-top:12px">
+              <div style="font-size:.78rem;font-weight:700;color:#5b21b6;margin-bottom:7px">⚡ أكثر المأكولات شيوعاً في رمضان</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px" id="quickCats">
+                <button class="qcat-btn" onclick="filterCat('iftar')">🌙 إفطار</button>
+                <button class="qcat-btn" onclick="filterCat('suhoor')">🌅 سحور</button>
+                <button class="qcat-btn" onclick="filterCat('soup')">🥣 شوربة</button>
+                <button class="qcat-btn" onclick="filterCat('rice')">🍚 رز وحبوب</button>
+                <button class="qcat-btn" onclick="filterCat('meat')">🍗 لحوم ودجاج</button>
+                <button class="qcat-btn" onclick="filterCat('bread')">🫓 خبز</button>
+                <button class="qcat-btn" onclick="filterCat('sweets')">🍯 حلويات</button>
+                <button class="qcat-btn" onclick="filterCat('drinks')">🥤 مشروبات</button>
+                <button class="qcat-btn" onclick="filterCat('fruits')">🍎 فواكه</button>
+                <button class="qcat-btn" onclick="filterCat('dairy')">🥛 ألبان وبيض</button>
+              </div>
+              <div id="catFoodList" style="display:none;margin-top:8px;max-height:200px;overflow-y:auto;background:#fff;border:1.5px solid #e0d4ff;border-radius:12px"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:0">
+          <div class="ct">📋 وجبات اليوم</div>
+          <div class="food-log-list" id="foodLogList"></div>
+          <div class="cal-total-bar">
+            <div><div class="ctb-label">إجمالي السعرات</div><div class="ctb-goal">الهدف: 1300-1400 سعرة</div></div>
+            <div class="ctb-num"><span id="totalCal">0</span> سعرة</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTES TAB -->
+      <div class="tsec" id="trk-notes">
+        <div class="card" style="margin-top:8px">
+          <div class="ct">📝 ملاحظاتي اليوم</div>
+          <div style="font-size:.77rem;color:var(--text-l)">كيف كان يومك؟ كيف حسيتِ؟ أي ملاحظة!</div>
+          <textarea class="notes-area" id="todayNotes" placeholder="اكتبي هنا..."></textarea>
+          <button class="save-btn" onclick="saveDay()">💾 حفظ في السجل</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ PROGRESS ════ -->
+    <div class="page" id="page-progress">
+      <div class="tabs" style="margin-top:8px">
+        <button class="tab active" onclick="stab('prog','chart',this)">📈 الوزن</button>
+        <button class="tab" onclick="stab('prog','meas',this)">📏 القياسات</button>
+        <button class="tab" onclick="stab('prog','calc',this)">📐 الحاسبة</button>
+      </div>
+
+      <div class="tsec active" id="prog-chart">
+        <div class="card" style="margin-top:8px">
+          <div class="ct">📈 منحنى الوزن</div>
+          <div id="weightChartWrap"></div>
+        </div>
+        <div class="card" style="margin-top:0">
+          <div class="ct">📊 ملخص التقدم</div>
+          <div id="weightSummary"><div style="color:var(--text-l);font-size:.82rem">سجلي وزنك يومياً لرؤية التقدم هنا!</div></div>
+        </div>
+      </div>
+
+      <div class="tsec" id="prog-meas">
+        <div class="card" style="margin-top:8px">
+          <div class="ct">📏 قياسات جسمك</div>
+          <div style="font-size:.77rem;color:var(--text-l);margin-bottom:3px">سجلي قياساتك كل أسبوع لترى الفرق!</div>
+          <div class="meas-grid">
+            <div class="meas-box"><label>📐 الخصر (سم)</label><input class="meas-input" id="m-waist" type="number" placeholder="مثال: 70" step="0.5"></div>
+            <div class="meas-box"><label>📐 الأرداف (سم)</label><input class="meas-input" id="m-hips" type="number" placeholder="مثال: 90" step="0.5"></div>
+            <div class="meas-box"><label>📐 الفخذ الأيمن (سم)</label><input class="meas-input" id="m-thighR" type="number" placeholder="مثال: 55" step="0.5"></div>
+            <div class="meas-box"><label>📐 الفخذ الأيسر (سم)</label><input class="meas-input" id="m-thighL" type="number" placeholder="مثال: 55" step="0.5"></div>
+            <div class="meas-box"><label>📐 البطن (سم)</label><input class="meas-input" id="m-belly" type="number" placeholder="مثال: 78" step="0.5"></div>
+            <div class="meas-box"><label>📐 العضد (سم)</label><input class="meas-input" id="m-arm" type="number" placeholder="مثال: 28" step="0.5"></div>
+          </div>
+          <button class="calc-btn" onclick="saveMeas()">💾 حفظ القياسات</button>
+        </div>
+        <div class="card" style="margin-top:0">
+          <div class="ct">📅 سجل القياسات</div>
+          <div id="measHistory"><div style="color:var(--text-l);font-size:.82rem">لا توجد قياسات محفوظة بعد.</div></div>
+        </div>
+      </div>
+
+      <div class="tsec" id="prog-calc">
+        <div class="card" style="margin-top:8px">
+          <div class="ct">📐 حاسبة السعرات الشخصية</div>
+          <div style="font-size:.77rem;color:var(--text-l);margin-bottom:9px">احسبي احتياجك اليومي الحقيقي!</div>
+          <div class="calc-row"><span class="calc-label">⚖️ الوزن</span><input class="calc-input" id="ci-weight" type="number" placeholder="كغ" value="53" step="0.5"></div>
+          <div class="calc-row"><span class="calc-label">📏 الطول</span><input class="calc-input" id="ci-height" type="number" placeholder="سم" value="154"></div>
+          <div class="calc-row"><span class="calc-label">🎂 العمر</span><input class="calc-input" id="ci-age" type="number" placeholder="سنة"></div>
+          <div class="calc-row"><span class="calc-label">🏃 النشاط</span>
+            <select class="calc-input" id="ci-activity">
+              <option value="1.2">قليل الحركة</option>
+              <option value="1.375" selected>خفيف (1-3 أيام/أسبوع)</option>
+              <option value="1.55">متوسط (3-5 أيام)</option>
+              <option value="1.725">عالي (6-7 أيام)</option>
+            </select>
+          </div>
+          <button class="calc-btn" onclick="calcBMR()">🔥 احسبي الآن</button>
+          <div class="result-box" id="calcResult">
+            <div class="rbrow"><span>BMR (الحرق الأساسي)</span><strong id="r-bmr">-</strong></div>
+            <div class="rbrow"><span>TDEE (الاحتياج اليومي)</span><strong id="r-tdee">-</strong></div>
+            <div class="rbrow"><span>🎯 لخسارة 0.5 كغ/أسبوع</span><strong id="r-lose05" style="color:var(--green)">-</strong></div>
+            <div class="rbrow"><span>🎯 لخسارة 1 كغ/أسبوع</span><strong id="r-lose1" style="color:var(--gold)">-</strong></div>
+            <div class="rbrow"><span>⚠️ الحد الأدنى الآمن</span><strong style="color:#e74c3c">1200 سعرة</strong></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:0">
+          <div class="ct">📊 مؤشر كتلة الجسم (BMI)</div>
+          <div id="bmiResult" style="padding:10px;background:var(--pink-p);border-radius:11px;color:var(--pink);font-weight:700;text-align:center;font-size:.88rem">أدخلي بياناتك واحسبي!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ LOG ════ -->
+    <div class="page" id="page-log">
+      <div class="card" style="margin-top:8px">
+        <div class="ct">📅 سجل أيامي</div>
+        <div style="font-size:.79rem;color:var(--text-l)">كل يوم تحفظينه يظهر هنا 💪</div>
+      </div>
+      <div id="logList"></div>
+      <div style="height:6px"></div>
+    </div>
+
+    <!-- ════ TIPS ════ -->
+    <div class="page" id="page-tips">
+      <div class="tl" style="margin-top:8px">
+        <h3>📅 توقعات النتائج</h3>
+        <div class="tli"><div class="tldot">1</div><div class="tltext"><strong>أسبوع 1:</strong> -0.5 كغ + انتفاخ أقل</div></div>
+        <div class="tli"><div class="tldot">2</div><div class="tltext"><strong>أسبوع 2:</strong> -1 كغ + جسم أخف</div></div>
+        <div class="tli"><div class="tldot">3</div><div class="tltext"><strong>أسبوع 3:</strong> -1.5 كغ + ملابس أوسع</div></div>
+        <div class="tli"><div class="tldot">4</div><div class="tltext"><strong>أسبوع 4:</strong> -2 كغ + شكل واضح!</div></div>
+      </div>
+      <div class="tcard pink"><h3>🔥 قبل التمرين</h3><ul><li>• اشربي كأس ماي</li><li>• سخني 3-5 دقائق</li><li>• لبسي ملابس مريحة</li><li>• شغلي موسيقى تحفزك!</li></ul></div>
+      <div class="tcard green"><h3>✨ بعد التمرين</h3><ul><li>• تمطي 5 دقائق (مهم!)</li><li>• كأس ماي أو عصير طبيعي</li><li>• استحمام دافئ</li><li>• وجبة خفيفة خلال 30 دقيقة</li></ul></div>
+      <div class="tcard gold"><h3>🌙 نصائح رمضان</h3><ul><li>• تمرين قبل الفطور بـ 30 دقيقة</li><li>• 2-3 لتر ماء بين الفطور والسحور</li><li>• سحور بروتين + ألياف = شبع أكثر</li><li>• تجنبي الملح والحلويات بالسحور</li></ul></div>
+      <div class="tcard blue"><h3>🎯 للتحفيز</h3><ul><li>• صوري نفسك كل أسبوع</li><li>• قيسي الخصر والفخذ بشريط قياس</li><li>• احتفلي بكل إنجاز صغير</li><li>• شاركي صديقة معك الرحلة!</li></ul></div>
+      <div style="text-align:center;padding:16px;color:var(--pink);font-weight:700;font-size:.98rem">💖 صممت خصيصاً لـ Aya 💖<br><span style="font-size:.8rem;color:var(--text-l);font-weight:400">أنتِ قادرة على كل شيء! 🌟</span></div>
+      <div style="height:6px"></div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM NAV — SVG ICONS -->
+  <nav class="bnav">
+    <button class="nb active" onclick="sp('home',this)">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="nl">الرئيسية</span>
+    </button>
+    <button class="nb" onclick="sp('meals',this)">
+      <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+      <span class="nl">الأكل</span>
+    </button>
+    <button class="nb" onclick="sp('exercises',this)">
+      <svg viewBox="0 0 24 24"><path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><path d="M3 9.5h18"/><path d="M3 14.5h18"/><circle cx="6.5" cy="6.5" r="2"/><circle cx="17.5" cy="6.5" r="2"/><circle cx="6.5" cy="17.5" r="2"/><circle cx="17.5" cy="17.5" r="2"/></svg>
+      <span class="nl">تمارين</span>
+    </button>
+    <button class="nb" onclick="sp('tracker',this)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><polyline points="9 16 11 18 15 14"/></svg>
+      <span class="nl">يومي</span>
+    </button>
+    <button class="nb" onclick="sp('progress',this)">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span class="nl">تقدمي</span>
+    </button>
+    <button class="nb" onclick="sp('log',this)">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <span class="nl">سجلي</span>
+    </button>
+    <button class="nb" onclick="sp('tips',this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span class="nl">نصائح</span>
+    </button>
+  </nav>
+</div>
+
+<div id="installBanner" style="display:none;position:fixed;bottom:calc(65px + env(safe-area-inset-bottom,0px) + 10px);left:13px;right:13px;background:linear-gradient(135deg,#1a0a2e,#2d1060);color:#fff;border-radius:16px;padding:13px 15px;z-index:300;box-shadow:0 4px 20px rgba(0,0,0,.3);display:none;align-items:center;gap:12px">
+  <span style="font-size:1.4rem">📲</span>
+  <div style="flex:1">
+    <div style="font-weight:700;font-size:.88rem">ثبّتي التطبيق!</div>
+    <div style="font-size:.73rem;opacity:.8;margin-top:2px">اضغطي لإضافة مفكرة رمضان لشاشتك الرئيسية</div>
+  </div>
+  <button id="installBtn" style="background:var(--pink);color:#fff;border:none;border-radius:10px;padding:8px 13px;font-family:'Tajawal',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;white-space:nowrap">تثبيت</button>
+  <button onclick="document.getElementById('installBanner').style.display='none'" style="background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:8px;padding:8px 10px;cursor:pointer;font-size:.8rem">✕</button>
+</div>
+
+<script>
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  const banner = document.getElementById('installBanner');
+  if(banner){ banner.style.display='flex'; }
+});
+document.addEventListener('DOMContentLoaded', ()=>{
+  const btn = document.getElementById('installBtn');
+  if(btn){
+    btn.addEventListener('click', async () => {
+      if(!deferredInstallPrompt) return;
+      deferredInstallPrompt.prompt();
+      const {outcome} = await deferredInstallPrompt.userChoice;
+      if(outcome==='accepted') document.getElementById('installBanner').style.display='none';
+      deferredInstallPrompt = null;
+    });
+  }
+});
+window.addEventListener('appinstalled', ()=>{
+  document.getElementById('installBanner').style.display='none';
+  deferredInstallPrompt=null;
+  // small toast
+  const t=document.getElementById('toast');
+  if(t){t.textContent='🎉 تم تثبيت التطبيق!';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+});
+</script>
+<div class="toast" id="toast"></div>
+
+<script>
+const QUOTES=['🌟 أنتِ أقوى مما تتخيلين!','💪 كل يوم هو فرصة جديدة!','🎯 الاستمرارية هي المفتاح!','✨ جسمك يستحق أفضل رعاية!','🔥 كل تمرين يقربكِ من هدفك!','🌙 رمضان فرصة ذهبية للتغيير!','💖 أحبي نفسك وجسمك!','⭐ الصبر مفتاح النجاح!'];
+const TODAY=new Date().toISOString().split('T')[0];
+let S={checks:{workout:false,diet:false,water:false,sleep:false},customTasks:[],customChecks:{},cups:0,weight:'',notes:'',foodLog:[],log:[],measurements:[],weightHistory:[]};
+
+function init(){
+  try{const s=localStorage.getItem('r-v4');if(s)S=JSON.parse(s);}catch(e){}
+  if(!S.customTasks)S.customTasks=[];
+  if(!S.customChecks)S.customChecks={};
+  if(!S.measurements)S.measurements=[];
+  if(!S.weightHistory)S.weightHistory=[];
+  if(!S.foodLog)S.foodLog=[];
+  if(localStorage.getItem('r-day')!==TODAY){
+    S.checks={workout:false,diet:false,water:false,sleep:false};
+    S.customChecks={};S.cups=0;S.weight='';S.notes='';S.foodLog=[];
+    localStorage.setItem('r-day',TODAY);save();
+  }
+  document.getElementById('todayDate').textContent=new Date().toLocaleDateString('ar-SA',{weekday:'long',month:'long',day:'numeric'});
+  document.getElementById('mq').textContent=QUOTES[Math.floor(Math.random()*QUOTES.length)];
+  ramadanCountdown();renderChecks();renderWater();renderFoodLog();renderLog();renderMeasHistory();renderWeightChart();loadInputs();renderCustomTasks();
+}
+function save(){localStorage.setItem('r-v4',JSON.stringify(S));}
+
+// NAV
+function sp(name,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  btn.classList.add('active');
+  document.querySelector('.pc').scrollTop=0;
+}
+function stab(group,name,btn){
+  const page=btn.closest('.page');
+  page.querySelectorAll('.tsec').forEach(s=>s.classList.remove('active'));
+  page.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById(group+'-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// COUNTDOWN
+function ramadanCountdown(){
+  const end=new Date('2026-03-20');
+  const diff=Math.ceil((end-new Date())/(864e5));
+  document.getElementById('cdNum').textContent=diff>0?diff:'🎉';
+  if(diff<=0){
+    document.getElementById('ramadanCountdown').querySelector('.cdtitle').textContent='عيد مبارك وكل عام وأنتِ بخير!';
+  }
+}
+
+// CHECKS
+function tc(key){
+  S.checks[key]=!S.checks[key];save();renderChecks();
+  if(S.checks[key]){const m={workout:'🎉 رهيبة! التمرين خلاص!',diet:'🥗 ممتاز!',water:'💧 أحسنتِ!',sleep:'😴 النوم يساعد على الحرق!'};toast(m[key]);}
+  checkAllDone();
+}
+function tcCustom(id){
+  S.customChecks[id]=!S.customChecks[id];save();renderCustomTasks();
+  if(S.customChecks[id])toast('✅ أحسنتِ!');
+  checkAllDone();
+}
+function checkAllDone(){
+  const fixedDone=Object.values(S.checks).every(v=>v);
+  const customDone=S.customTasks.every(t=>S.customChecks[t.id]);
+  if(fixedDone&&(S.customTasks.length===0||customDone))setTimeout(()=>toast('🏆 رهيبة! أكملتِ كل مهام اليوم!'),600);
+}
+function renderChecks(){
+  ['workout','diet','water','sleep'].forEach(k=>{
+    ['','2'].forEach(s=>{
+      const c=document.getElementById('c-'+k+s);
+      if(c){c.classList.toggle('done',S.checks[k]);c.textContent=S.checks[k]?'✓':'';}
+    });
+  });
+  const done=Object.values(S.checks).filter(Boolean).length+S.customTasks.filter(t=>S.customChecks[t.id]).length;
+  const total=4+S.customTasks.length;
+  const hdc=document.getElementById('hdc');if(hdc)hdc.textContent=done+'/'+total;
+  const pbf=document.getElementById('pbf');if(pbf)pbf.style.width=(total>0?done/total*100:0)+'%';
+}
+
+// CUSTOM TASKS
+function addCustomTask(){
+  const input=document.getElementById('newTaskInput');
+  const txt=input.value.trim();
+  if(!txt){toast('⚠️ اكتبي اسم المهمة!');return;}
+  const id='task_'+Date.now();
+  S.customTasks.push({id,label:txt});
+  S.customChecks[id]=false;
+  input.value='';save();renderCustomTasks();renderChecks();
+}
+function deleteCustomTask(id){
+  S.customTasks=S.customTasks.filter(t=>t.id!==id);
+  delete S.customChecks[id];
+  save();renderCustomTasks();renderChecks();
+}
+function renderCustomTasks(){
+  const html=S.customTasks.map(t=>`
+    <div class="cr" id="crow-${t.id}">
+      <div class="cc ${S.customChecks[t.id]?'done':''}" onclick="tcCustom('${t.id}')">${S.customChecks[t.id]?'✓':''}</div>
+      <span>⭐</span>
+      <span class="crl" onclick="tcCustom('${t.id}')">${t.label}</span>
+      <button class="del-task" onclick="deleteCustomTask('${t.id}')">✕</button>
+    </div>`).join('');
+  ['customTasksHome','customTasksTracker'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.innerHTML=html;
+  });
+}
+
+// WATER
+function renderWater(){
+  const g=document.getElementById('wgrid');if(!g)return;
+  g.innerHTML='';
+  for(let i=0;i<8;i++){
+    const c=document.createElement('div');
+    c.className='wcup'+(i<S.cups?' filled':'');
+    c.innerHTML='<span class="ci">💧</span>';
+    c.onclick=()=>{S.cups=(i<S.cups)?i:i+1;save();renderWater();updateStats();if(S.cups===8)toast('💧 ممتاز! أكملتِ 8 أكواب!');};
+    g.appendChild(c);
+  }
+  const wc=document.getElementById('wcnt');if(wc)wc.textContent=S.cups+' / 8 أكواب';
+  updateStats();
+}
+function updateStats(){
+  const hwc=document.getElementById('hwc');if(hwc)hwc.textContent=S.cups;
+  const hw=document.getElementById('hw');if(hw)hw.textContent=S.weight||'-';
+}
+
+// ─── FOOD DATABASE ───
+const FOOD_DB=[
+  // إفطار
+  {n:'تمر (حبة)',cal:20,unit:'حبة',cat:'iftar'},
+  {n:'تمر مجدول (حبة)',cal:25,unit:'حبة',cat:'iftar'},
+  {n:'لبن (كاسة 200مل)',cal:120,unit:'كاسة',cat:'iftar'},
+  {n:'عصير برتقال طبيعي (كاسة)',cal:110,unit:'كاسة',cat:'iftar'},
+  {n:'عصير تمر هندي (كاسة)',cal:130,unit:'كاسة',cat:'iftar'},
+  {n:'قمر الدين (كاسة)',cal:140,unit:'كاسة',cat:'iftar'},
+  // سحور
+  {n:'شوفان مطبوخ (كاسة)',cal:150,unit:'كاسة',cat:'suhoor'},
+  {n:'خبز توست (شريحة)',cal:70,unit:'شريحة',cat:'suhoor'},
+  {n:'جبنة بيضاء (معلقة كبيرة)',cal:30,unit:'معلقة',cat:'suhoor'},
+  {n:'زيتون (5 حبات)',cal:35,unit:'5 حبات',cat:'suhoor'},
+  {n:'لبنة (معلقة كبيرة)',cal:40,unit:'معلقة',cat:'suhoor'},
+  {n:'موز (حبة)',cal:90,unit:'حبة',cat:'suhoor'},
+  // شوربة
+  {n:'شوربة عدس (كاسة)',cal:130,unit:'كاسة',cat:'soup'},
+  {n:'شوربة خضار (كاسة)',cal:80,unit:'كاسة',cat:'soup'},
+  {n:'شوربة دجاج (كاسة)',cal:120,unit:'كاسة',cat:'soup'},
+  {n:'شوربة فريكة (كاسة)',cal:180,unit:'كاسة',cat:'soup'},
+  {n:'شوربة شعيرية (كاسة)',cal:150,unit:'كاسة',cat:'soup'},
+  {n:'شوربة طماطم (كاسة)',cal:90,unit:'كاسة',cat:'soup'},
+  // رز وحبوب
+  {n:'رز مطبوخ (معلقة كبيرة)',cal:30,unit:'معلقة',cat:'rice'},
+  {n:'رز مطبوخ (طبق متوسط)',cal:200,unit:'طبق',cat:'rice'},
+  {n:'فريكة مطبوخة (كاسة)',cal:220,unit:'كاسة',cat:'rice'},
+  {n:'برغل مطبوخ (كاسة)',cal:150,unit:'كاسة',cat:'rice'},
+  {n:'مكرونة مطبوخة (كاسة)',cal:200,unit:'كاسة',cat:'rice'},
+  {n:'حمص مسلوق (كاسة)',cal:270,unit:'كاسة',cat:'rice'},
+  {n:'عدس مسلوق (كاسة)',cal:230,unit:'كاسة',cat:'rice'},
+  {n:'فول مدمس (كاسة)',cal:190,unit:'كاسة',cat:'rice'},
+  // لحوم ودجاج
+  {n:'صدر دجاج مشوي (نص)',cal:130,unit:'قطعة',cat:'meat'},
+  {n:'صدر دجاج مشوي (كامل)',cal:260,unit:'قطعة',cat:'meat'},
+  {n:'فخذ دجاج مشوي',cal:180,unit:'قطعة',cat:'meat'},
+  {n:'دجاج مقلي (قطعة)',cal:250,unit:'قطعة',cat:'meat'},
+  {n:'لحم بقر مشوي (100غ)',cal:215,unit:'100غ',cat:'meat'},
+  {n:'لحم غنم مشوي (100غ)',cal:250,unit:'100غ',cat:'meat'},
+  {n:'سمك مشوي (100غ)',cal:150,unit:'100غ',cat:'meat'},
+  {n:'تونة بالماء (علبة 170غ)',cal:130,unit:'علبة',cat:'meat'},
+  {n:'بيضة مسلوقة',cal:78,unit:'حبة',cat:'meat'},
+  {n:'بيضة مقلية',cal:100,unit:'حبة',cat:'meat'},
+  {n:'كبدة مشوية (100غ)',cal:175,unit:'100غ',cat:'meat'},
+  // خبز
+  {n:'خبز عربي أبيض (رغيف صغير)',cal:80,unit:'رغيف',cat:'bread'},
+  {n:'خبز عربي أسمر (رغيف صغير)',cal:70,unit:'رغيف',cat:'bread'},
+  {n:'خبز تنور (رغيف)',cal:120,unit:'رغيف',cat:'bread'},
+  {n:'خبز توست (شريحة)',cal:70,unit:'شريحة',cat:'bread'},
+  {n:'خبز باجيت (شريحة)',cal:130,unit:'شريحة',cat:'bread'},
+  // حلويات
+  {n:'قطايف (حبة مع قشطة)',cal:150,unit:'حبة',cat:'sweets'},
+  {n:'قطايف (حبة بالجوز)',cal:130,unit:'حبة',cat:'sweets'},
+  {n:'كنافة (قطعة 100غ)',cal:350,unit:'قطعة',cat:'sweets'},
+  {n:'بسبوسة (قطعة)',cal:200,unit:'قطعة',cat:'sweets'},
+  {n:'لقيمات (5 حبات)',cal:200,unit:'5 حبات',cat:'sweets'},
+  {n:'مهلبية (كاسة)',cal:200,unit:'كاسة',cat:'sweets'},
+  {n:'أم علي (طبق)',cal:400,unit:'طبق',cat:'sweets'},
+  {n:'تشيز كيك (شريحة)',cal:350,unit:'شريحة',cat:'sweets'},
+  {n:'شوكولاتة (لوح 30غ)',cal:160,unit:'لوح',cat:'sweets'},
+  {n:'حلاوة طحينية (معلقة كبيرة)',cal:90,unit:'معلقة',cat:'sweets'},
+  // مشروبات
+  {n:'ماء (كاسة)',cal:0,unit:'كاسة',cat:'drinks'},
+  {n:'شاي بدون سكر (كاسة)',cal:5,unit:'كاسة',cat:'drinks'},
+  {n:'شاي بسكر (كاسة)',cal:50,unit:'كاسة',cat:'drinks'},
+  {n:'قهوة سادة (كاسة)',cal:5,unit:'كاسة',cat:'drinks'},
+  {n:'قهوة بحليب (كاسة)',cal:80,unit:'كاسة',cat:'drinks'},
+  {n:'لبن (كاسة 200مل)',cal:120,unit:'كاسة',cat:'drinks'},
+  {n:'عصير برتقال معلب (كاسة)',cal:120,unit:'كاسة',cat:'drinks'},
+  {n:'كولا (علبة 330مل)',cal:140,unit:'علبة',cat:'drinks'},
+  {n:'كولا دايت (علبة)',cal:2,unit:'علبة',cat:'drinks'},
+  {n:'عصير طبيعي مشكل (كاسة)',cal:120,unit:'كاسة',cat:'drinks'},
+  // فواكه
+  {n:'تفاحة (متوسطة)',cal:80,unit:'حبة',cat:'fruits'},
+  {n:'موز (حبة متوسطة)',cal:90,unit:'حبة',cat:'fruits'},
+  {n:'برتقالة (متوسطة)',cal:60,unit:'حبة',cat:'fruits'},
+  {n:'عنب (كاسة)',cal:110,unit:'كاسة',cat:'fruits'},
+  {n:'بطيخ (شريحة)',cal:85,unit:'شريحة',cat:'fruits'},
+  {n:'فراولة (كاسة)',cal:50,unit:'كاسة',cat:'fruits'},
+  {n:'مانجو (نص)',cal:100,unit:'نص',cat:'fruits'},
+  {n:'خوخ (حبة)',cal:60,unit:'حبة',cat:'fruits'},
+  {n:'كمثرى (حبة)',cal:100,unit:'حبة',cat:'fruits'},
+  // ألبان وبيض
+  {n:'حليب كامل الدسم (كاسة)',cal:150,unit:'كاسة',cat:'dairy'},
+  {n:'حليب قليل الدسم (كاسة)',cal:100,unit:'كاسة',cat:'dairy'},
+  {n:'زبادي طبيعي (علبة 180غ)',cal:110,unit:'علبة',cat:'dairy'},
+  {n:'زبادي يوناني (علبة)',cal:150,unit:'علبة',cat:'dairy'},
+  {n:'جبنة بيضاء (شريحة)',cal:60,unit:'شريحة',cat:'dairy'},
+  {n:'جبنة شيدر (شريحة)',cal:110,unit:'شريحة',cat:'dairy'},
+  {n:'لبنة (معلقة كبيرة)',cal:40,unit:'معلقة',cat:'dairy'},
+  {n:'قشطة (معلقة كبيرة)',cal:50,unit:'معلقة',cat:'dairy'},
+  {n:'زبدة (معلقة صغيرة)',cal:35,unit:'معلقة',cat:'dairy'},
+  // إضافات شائعة
+  {n:'زيت زيتون (معلقة كبيرة)',cal:120,unit:'معلقة',cat:'iftar'},
+  {n:'سمنة (معلقة صغيرة)',cal:45,unit:'معلقة',cat:'iftar'},
+  {n:'سكر (معلقة صغيرة)',cal:16,unit:'معلقة',cat:'suhoor'},
+  {n:'عسل (معلقة كبيرة)',cal:60,unit:'معلقة',cat:'suhoor'},
+  {n:'طحينة (معلقة كبيرة)',cal:90,unit:'معلقة',cat:'iftar'},
+  {n:'فتة حمص (طبق متوسط)',cal:450,unit:'طبق',cat:'iftar'},
+  {n:'سلطة خضار (طبق)',cal:50,unit:'طبق',cat:'iftar'},
+  {n:'سلطة فتوش (طبق)',cal:150,unit:'طبق',cat:'iftar'},
+  {n:'تبولة (طبق)',cal:130,unit:'طبق',cat:'iftar'},
+  {n:'مسخن (دجاج+خبز)',cal:600,unit:'حصة',cat:'meat'},
+  {n:'منسف (طبق متوسط)',cal:700,unit:'طبق',cat:'meat'},
+  {n:'شاورما دجاج (ساندويتش)',cal:400,unit:'ساندويتش',cat:'meat'},
+  {n:'فلافل (3 حبات)',cal:180,unit:'3 حبات',cat:'iftar'},
+];
+
+let selectedFoodItem=null;
+
+function searchFood(q){
+  const box=document.getElementById('foodSuggestions');
+  const catList=document.getElementById('catFoodList');
+  catList.style.display='none';
+  if(!q||q.length<1){box.style.display='none';return;}
+  const results=FOOD_DB.filter(f=>f.n.includes(q)).slice(0,10);
+  if(!results.length){box.style.display='none';return;}
+  box.style.display='block';
+  box.innerHTML=results.map((f,i)=>
+    `<div class="food-db-item" onclick="selectFood(${FOOD_DB.indexOf(f)})">
+      <div class="fdi-name">${f.n}</div>
+      <div class="fdi-cal">${f.cal} سعرة / ${f.unit}</div>
+    </div>`
+  ).join('');
+}
+
+function filterCat(cat){
+  document.querySelectorAll('.qcat-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('foodSuggestions').style.display='none';
+  const items=FOOD_DB.filter(f=>f.cat===cat);
+  const list=document.getElementById('catFoodList');
+  list.style.display='block';
+  list.innerHTML=items.map(f=>
+    `<div class="food-db-item" onclick="selectFood(${FOOD_DB.indexOf(f)})">
+      <div class="fdi-name">${f.n}</div>
+      <div class="fdi-cal">${f.cal} سعرة / ${f.unit}</div>
+    </div>`
+  ).join('');
+}
+
+let currentFoodMode='unit';
+let currentSpoonType='large'; // large=15ml, small=5ml
+
+// calories per ml for common foods (approximate)
+// Used to estimate spoon-based calories when food is measured in units/cups
+const CAL_PER_ML={
+  // dense foods ~ 2-4 cal/ml, light foods ~0.4-1 cal/ml
+  // We use a per-spoon lookup based on food category and name
+};
+
+function getCalPerSpoon(food, spoonType){
+  // spoonType: large=15ml, small=5ml
+  // We estimate cal/spoon from the food's cal per unit
+  // First check if the unit is already معلقة (spoon) - use directly
+  if(food.unit.includes('معلقة')){
+    const isLargeUnit=food.unit.includes('كبيرة')||!food.unit.includes('صغيرة');
+    if(spoonType==='large') return isLargeUnit ? food.cal : food.cal*3;
+    else return isLargeUnit ? Math.round(food.cal/3) : food.cal;
+  }
+  // For كاسة (cup ~240ml): 1 large spoon = 15/240 of cup
+  if(food.unit.includes('كاسة')){
+    const ratio = spoonType==='large' ? 15/240 : 5/240;
+    return Math.max(1, Math.round(food.cal * ratio));
+  }
+  // For طبق (plate ~400ml equiv): 1 large spoon ≈ 15/400
+  if(food.unit.includes('طبق')){
+    const ratio = spoonType==='large' ? 15/400 : 5/400;
+    return Math.max(1, Math.round(food.cal * ratio));
+  }
+  // For حبة (piece): estimate density by category
+  if(food.unit.includes('حبة')||food.unit.includes('قطعة')||food.unit.includes('شريحة')){
+    // Not suitable for spoon measurement - show warning
+    return null;
+  }
+  // For 100غ: 1 large spoon ≈ 15g
+  if(food.unit.includes('100غ')||food.unit.includes('100 غ')){
+    const ratio = spoonType==='large' ? 0.15 : 0.05;
+    return Math.max(1, Math.round(food.cal * ratio));
+  }
+  // Fallback: assume 200ml unit
+  const ratio = spoonType==='large' ? 15/200 : 5/200;
+  return Math.max(1, Math.round(food.cal * ratio));
+}
+
+function setFoodMode(mode){
+  currentFoodMode=mode;
+  if(mode==='unit'){
+    document.getElementById('modeUnitRow').style.display='flex';
+    document.getElementById('modeSpoonsRow').style.display='none';
+    document.getElementById('modeUnitBtn').style.background='#7c3aed';
+    document.getElementById('modeUnitBtn').style.color='#fff';
+    document.getElementById('modeUnitBtn').style.border='none';
+    document.getElementById('modeSpoonsBtn').style.background='#f0ebff';
+    document.getElementById('modeSpoonsBtn').style.color='#5b21b6';
+    document.getElementById('modeSpoonsBtn').style.border='1.5px solid #c9b8ff';
+    updateQtyCalc();
+  } else {
+    document.getElementById('modeUnitRow').style.display='none';
+    document.getElementById('modeSpoonsRow').style.display='block';
+    document.getElementById('modeSpoonsBtn').style.background='#7c3aed';
+    document.getElementById('modeSpoonsBtn').style.color='#fff';
+    document.getElementById('modeSpoonsBtn').style.border='none';
+    document.getElementById('modeUnitBtn').style.background='#f0ebff';
+    document.getElementById('modeUnitBtn').style.color='#5b21b6';
+    document.getElementById('modeUnitBtn').style.border='1.5px solid #c9b8ff';
+    updateSpoonCalc();
+  }
+}
+
+function setSpoonType(type, btn){
+  currentSpoonType=type;
+  document.getElementById('spoonTypeLargeBtn').style.background= type==='large'?'#7c3aed':'#f0ebff';
+  document.getElementById('spoonTypeLargeBtn').style.color= type==='large'?'#fff':'#5b21b6';
+  document.getElementById('spoonTypeLargeBtn').style.border= type==='large'?'none':'1.5px solid #c9b8ff';
+  document.getElementById('spoonTypeSmallBtn').style.background= type==='small'?'#7c3aed':'#f0ebff';
+  document.getElementById('spoonTypeSmallBtn').style.color= type==='small'?'#fff':'#5b21b6';
+  document.getElementById('spoonTypeSmallBtn').style.border= type==='small'?'none':'1.5px solid #c9b8ff';
+  updateSpoonCalc();
+}
+
+function updateSpoonCalc(){
+  if(!selectedFoodItem) return;
+  const qty=parseFloat(document.getElementById('spoonQty').value)||1;
+  const calPerSpoon=getCalPerSpoon(selectedFoodItem, currentSpoonType);
+  const noteEl=document.getElementById('spoonNote');
+  if(calPerSpoon===null){
+    document.getElementById('spoonCalcResult').textContent='⚠️ غير مناسب للمعالق';
+    noteEl.textContent='هذا الأكل يُقاس بالحبة أو القطعة، استخدمي الوحدة الأصلية';
+    return;
+  }
+  const total=Math.round(calPerSpoon*qty);
+  document.getElementById('spoonCalcResult').textContent=total+' سعرة';
+  const spoonLabel=currentSpoonType==='large'?'معلقة كبيرة':'معلقة صغيرة';
+  noteEl.textContent=`تقريباً ${calPerSpoon} سعرة لكل ${spoonLabel}`;
+}
+
+function selectFood(idx){
+  selectedFoodItem=FOOD_DB[idx];
+  document.getElementById('foodSearchInput').value=selectedFoodItem.n;
+  document.getElementById('foodSuggestions').style.display='none';
+  document.getElementById('catFoodList').style.display='none';
+  document.getElementById('selectedFoodName').textContent=selectedFoodItem.n;
+  document.getElementById('selectedFoodBase').textContent=selectedFoodItem.cal+' سعرة لكل '+selectedFoodItem.unit;
+  document.getElementById('foodUnit').textContent=selectedFoodItem.unit;
+  document.getElementById('foodQty').value=1;
+  document.getElementById('qtyCalcResult').textContent=selectedFoodItem.cal+' سعرة';
+  document.getElementById('selectedFoodBox').style.display='block';
+  // reset mode
+  currentFoodMode='unit';
+  setFoodMode('unit');
+  document.getElementById('spoonQty').value=1;
+  updateSpoonCalc();
+}
+
+function updateQtyCalc(){
+  if(!selectedFoodItem)return;
+  const qty=parseFloat(document.getElementById('foodQty').value)||1;
+  const total=Math.round(selectedFoodItem.cal*qty);
+  document.getElementById('qtyCalcResult').textContent=total+' سعرة';
+}
+
+function addFoodFromDB(){
+  if(!selectedFoodItem)return;
+  let totalCal, name;
+  if(currentFoodMode==='spoons'){
+    const qty=parseFloat(document.getElementById('spoonQty').value)||1;
+    const calPerSpoon=getCalPerSpoon(selectedFoodItem, currentSpoonType);
+    if(calPerSpoon===null){toast('⚠️ استخدمي الوحدة الأصلية لهذا الأكل!');return;}
+    totalCal=Math.round(calPerSpoon*qty);
+    const spoonLabel=currentSpoonType==='large'?'معلقة كبيرة':'معلقة صغيرة';
+    name=`${selectedFoodItem.n} (${qty} ${spoonLabel})`;
+  } else {
+    const qty=parseFloat(document.getElementById('foodQty').value)||1;
+    totalCal=Math.round(selectedFoodItem.cal*qty);
+    name=qty===1?selectedFoodItem.n:`${selectedFoodItem.n} × ${qty}`;
+  }
+  S.foodLog.push({name,cal:totalCal});
+  save();renderFoodLog();
+  document.getElementById('foodSearchInput').value='';
+  document.getElementById('selectedFoodBox').style.display='none';
+  document.getElementById('catFoodList').style.display='none';
+  selectedFoodItem=null;
+  toast('✅ تمت إضافة الوجبة!');
+}
+
+function removeFood(idx){S.foodLog.splice(idx,1);save();renderFoodLog();}
+function renderFoodLog(){
+  const list=document.getElementById('foodLogList');if(!list)return;
+  if(!S.foodLog.length){list.innerHTML='<div style="color:var(--text-l);font-size:.82rem;text-align:center;padding:10px">لا يوجد أكل مسجل بعد 🍽️</div>';}
+  else{list.innerHTML=S.foodLog.map((f,i)=>`<div class="food-log-item"><div class="fli-name">${f.isAI?'🤖 ':''} ${f.name}</div><span class="fli-cal">${f.cal} سعرة</span><button class="fli-del" onclick="removeFood(${i})">✕</button></div>`).join('');}
+  const total=S.foodLog.reduce((a,f)=>a+f.cal,0);
+  const el=document.getElementById('totalCal');if(el)el.textContent=total;
+}
+
+// SAVE DAY
+function loadInputs(){
+  const ni=document.getElementById('todayNotes');if(ni)ni.value=S.notes||'';
+  const wi=document.getElementById('wgtInput');if(wi)wi.value=S.weight||'';
+  renderFoodLog();
+}
+function saveDay(){
+  S.notes=document.getElementById('todayNotes')?.value||'';
+  S.weight=document.getElementById('wgtInput')?.value||'';
+  updateStats();
+  if(S.weight){
+    const idx=S.weightHistory.findIndex(e=>e.date===TODAY);
+    if(idx>=0)S.weightHistory[idx].w=parseFloat(S.weight);
+    else S.weightHistory.push({date:TODAY,w:parseFloat(S.weight)});
+  }
+  const entry={date:TODAY,checks:{...S.checks},customChecks:{...S.customChecks},cups:S.cups,weight:S.weight,notes:S.notes,foodTotal:S.foodLog.reduce((a,f)=>a+f.cal,0),foodCount:S.foodLog.length};
+  const idx=S.log.findIndex(e=>e.date===TODAY);
+  if(idx>=0)S.log[idx]=entry;else S.log.unshift(entry);
+  save();renderLog();renderWeightChart();
+  toast('✅ تم حفظ يومك!');
+}
+
+// LOG
+function renderLog(){
+  const list=document.getElementById('logList');if(!list)return;
+  if(!S.log||!S.log.length){list.innerHTML='<div class="log-empty"><div class="icon">📭</div><p>ما في سجلات بعد.<br>احفظي يومك من "يومي"!</p></div>';return;}
+  const names={workout:'💪 تمرين',diet:'🍽️ أكل',water:'💧 ماء',sleep:'😴 نوم'};
+  list.innerHTML=S.log.slice(0,60).map(e=>{
+    const d=new Date(e.date).toLocaleDateString('ar-SA',{weekday:'short',month:'short',day:'numeric'});
+    const done=Object.values(e.checks||{}).filter(Boolean).length;
+    const tags=Object.entries(e.checks||{}).map(([k,v])=>`<span class="lt ${v?'done':'skip'}">${names[k]}</span>`).join('');
+    return `<div class="le"><div class="ledb"><span class="led">📅 ${d}</span><span class="lesp">${done}/4</span></div><div class="lec"><div class="lch">${tags}</div>${e.cups?`<div>💧 ${e.cups}/8 أكواب</div>`:''} ${e.weight?`<div class="lwt">⚖️ ${e.weight} كغ</div>`:''} ${e.foodTotal?`<div>🍴 ${e.foodTotal} سعرة (${e.foodCount} وجبات)</div>`:''} ${e.notes?`<div class="lnote">"${e.notes}"</div>`:''}</div></div>`;
+  }).join('');
+}
+
+// MEASUREMENTS
+function saveMeas(){
+  const e={date:TODAY,waist:document.getElementById('m-waist').value,hips:document.getElementById('m-hips').value,thighR:document.getElementById('m-thighR').value,thighL:document.getElementById('m-thighL').value,belly:document.getElementById('m-belly').value,arm:document.getElementById('m-arm').value};
+  const idx=S.measurements.findIndex(m=>m.date===TODAY);
+  if(idx>=0)S.measurements[idx]=e;else S.measurements.unshift(e);
+  save();renderMeasHistory();toast('📏 تم حفظ القياسات!');
+}
+function renderMeasHistory(){
+  const h=document.getElementById('measHistory');if(!h)return;
+  if(!S.measurements.length){h.innerHTML='<div style="color:var(--text-l);font-size:.82rem">لا توجد قياسات محفوظة بعد.</div>';return;}
+  h.innerHTML=S.measurements.slice(0,10).map(e=>{
+    const d=new Date(e.date).toLocaleDateString('ar-SA',{month:'short',day:'numeric'});
+    return `<div class="mh-item"><span class="mh-date">📅 ${d}</span><div class="mh-vals">${e.waist?`<span class="mh-val">خصر ${e.waist}سم</span>`:''} ${e.hips?`<span class="mh-val">أرداف ${e.hips}سم</span>`:''}</div></div>`;
+  }).join('');
+}
+
+// WEIGHT CHART
+function renderWeightChart(){
+  const wrap=document.getElementById('weightChartWrap');const ws=document.getElementById('weightSummary');if(!wrap)return;
+  if(!S.weightHistory||S.weightHistory.length<2){wrap.innerHTML='<div class="chart-empty">📊 سجلي وزنك يومياً لترى منحنى التقدم!<br><small>من يومي ← مهامي ← وزن اليوم</small></div>';return;}
+  const sorted=[...S.weightHistory].sort((a,b)=>a.date.localeCompare(b.date)).slice(-14);
+  const weights=sorted.map(e=>e.w);
+  const minW=Math.min(...weights)-0.5,maxW=Math.max(...weights)+0.5;
+  const W=320,H=150,pad={l:38,r:10,t:15,b:28};
+  const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+  const xStep=cw/(sorted.length-1||1);
+  const yS=v=>pad.t+ch-(v-minW)/(maxW-minW)*ch;
+  const pts=sorted.map((e,i)=>`${pad.l+i*xStep},${yS(e.w)}`).join(' ');
+  const area=pts+` ${pad.l+(sorted.length-1)*xStep},${pad.t+ch} ${pad.l},${pad.t+ch}`;
+  const labels=sorted.map((e,i)=>{const d=new Date(e.date);return `<text x="${pad.l+i*xStep}" y="${H-6}" text-anchor="middle" font-size="9" fill="#7a5a8a">${d.getDate()}/${d.getMonth()+1}</text>`;}).join('');
+  const dots=sorted.map((e,i)=>`<circle cx="${pad.l+i*xStep}" cy="${yS(e.w)}" r="4" fill="#E91E8C" stroke="#fff" stroke-width="2"/><text x="${pad.l+i*xStep}" y="${yS(e.w)-8}" text-anchor="middle" font-size="9" fill="#E91E8C" font-weight="bold">${e.w}</text>`).join('');
+  wrap.innerHTML=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;overflow:visible"><defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E91E8C" stop-opacity=".2"/><stop offset="100%" stop-color="#E91E8C" stop-opacity="0"/></linearGradient></defs><polygon points="${area}" fill="url(#ag)"/><polyline points="${pts}" fill="none" stroke="#E91E8C" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>${dots}${labels}</svg>`;
+  if(ws&&sorted.length>=2){const f=sorted[0].w,l=sorted[sorted.length-1].w,d=(l-f).toFixed(1);ws.innerHTML=`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>أول وزن</span><strong>${f} كغ</strong></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>آخر وزن</span><strong>${l} كغ</strong></div><div style="display:flex;justify-content:space-between;padding:6px 0"><span>التغيير</span><strong style="color:${d<0?'var(--green)':'#e74c3c'}">${d<0?'🎉 -'+Math.abs(d)+' كغ!':'+'+ d+' كغ'}</strong></div>`;}
+}
+
+// BMR CALC
+function calcBMR(){
+  const w=parseFloat(document.getElementById('ci-weight').value);
+  const h=parseFloat(document.getElementById('ci-height').value);
+  const a=parseFloat(document.getElementById('ci-age').value);
+  const act=parseFloat(document.getElementById('ci-activity').value);
+  if(!w||!h||!a){toast('⚠️ أدخلي كل البيانات!');return;}
+  const bmr=Math.round(10*w+6.25*h-5*a-161);
+  const tdee=Math.round(bmr*act);
+  document.getElementById('r-bmr').textContent=bmr+' سعرة';
+  document.getElementById('r-tdee').textContent=tdee+' سعرة';
+  document.getElementById('r-lose05').textContent=Math.max(1200,tdee-500)+' سعرة';
+  document.getElementById('r-lose1').textContent=Math.max(1200,tdee-1000)+' سعرة';
+  document.getElementById('calcResult').classList.add('show');
+  const bmi=(w/((h/100)**2)).toFixed(1);
+  let lbl=bmi<18.5?'نحيف جداً ⚠️':bmi<25?'مثالي ✅':bmi<30?'زيادة وزن 📉':'سمنة ⚠️';
+  document.getElementById('bmiResult').textContent=`BMI = ${bmi} — ${lbl}`;
+  toast('✅ تم الحساب!');
+}
+
+function tex(card){card.classList.toggle('open');}
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
+
+// ── Inline Service Worker via blob URL for full offline support ──
+if('serviceWorker' in navigator){
+  const swCode = `
+const CACHE = 'aya-ramadan-v1';
+// Cache everything on install
+self.addEventListener('install', e => {
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(clients.claim());
+});
+// Cache-first strategy: serve from cache, fallback to network, cache new responses
+self.addEventListener('fetch', e => {
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      if(cached) return cached;
+      return fetch(e.request).then(response => {
+        if(!response || response.status !== 200) return response;
+        const clone = response.clone();
+        caches.open(CACHE).then(cache => cache.put(e.request, clone));
+        return response;
+      }).catch(() => cached || new Response('Offline', {status: 503}));
+    })
+  );
+});
+`;
+  const swBlob = new Blob([swCode], {type:'text/javascript'});
+  const swURL = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swURL).then(reg => {
+    console.log('SW registered ✅');
+  }).catch(err => {
+    // Blob SW may fail in some browsers (Firefox) - silent fallback
+    console.log('SW blob failed, trying alternative...');
+  });
+}
+
+init();
+
+</script>
+</body>
+</html>
